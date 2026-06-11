@@ -29,11 +29,11 @@
 #endif
 
 #define HOMIEVERSION "4.0.0"
-#define MAX_PAYLOAD_SIZE 57 
+#define MAX_PAYLOAD_SIZE 56 
 
 typedef struct 
 {
-  uint8_t   myNodes;
+  uint16_t   myNodes;         // es gibt bis zu 1023 Nodes
   uint8_t   myProperties;
   uint8_t   myKeyWordNumber;
   char      myNachricht[MAX_PAYLOAD_SIZE];
@@ -100,12 +100,12 @@ Einheiten :
 */
 
 
-bool incomingMessage(uint8_t, DTransfer*);
+bool incomingMessage(uint16_t, DTransfer*);
 
 struct myHomeProperty
 {
   uint8_t propertyID;
-  uint8_t propertyNodeID;
+  uint16_t propertyNodeID;
   char propertyName[MAX_PAYLOAD_SIZE];
   char propertyUnit[MAX_PAYLOAD_SIZE];
   char propertyDataType[MAX_PAYLOAD_SIZE];
@@ -117,7 +117,7 @@ struct myHomeNode
 {
   char nodeName[MAX_PAYLOAD_SIZE];              // ist hier gleich Nodenummer
   char nodeType[MAX_PAYLOAD_SIZE];              // Enthaelt den Namen
-  uint8_t nodeID;
+  uint16_t nodeID;
   char nodeProperties[MAX_PAYLOAD_SIZE];        // ID's der Properties, durch Komma getrennt
 };
 
@@ -136,20 +136,20 @@ class myHomeSachen
   public:
     myHomeSachen( const char[] ); 
     bool initRadio(uint8_t, uint8_t, uint16_t, bool );
-    bool sendToNode(uint8_t); // Zielnode, interner Struktur wird versand
-    bool sendNodeinfoToNode(uint8_t, uint8_t, uint8_t, char[]); // Zielnode, NodenID, Type, Nachricht
-    bool sendToNode(uint8_t, uint8_t, uint8_t, uint8_t, const char[]);// Zielnode, Node, Properties, KeyWordNumber, Nachricht
+    bool sendToNode(uint16_t); // Zielnode, interner Struktur wird versand
+    bool sendNodeinfoToNode(uint16_t, uint16_t, uint8_t, char[]); // Zielnode, NodenID, Type, Nachricht
+    bool sendToNode(uint16_t, uint16_t, uint8_t, uint8_t, const char[]);// Zielnode, Node, Properties, KeyWordNumber, Nachricht
     bool getRadioData();
     void loop(void);
     bool sendDeviceInfo(void);
     bool sendNodeInfo(void);
     bool sendPropertiesInfo(void);
     uint8_t getRFM69Temp(void); // Temperatur des RFM69
-    bool addNode(const char[], const char[], uint8_t); // name, Nodenummer > 0
-    bool addProperty( uint8_t, uint8_t, const char[], const char[], const char[], bool, const char[] ); // Property Nummer, Node Nummer, Property Name, Unit Nummer, Datentyp Nummer, Setzen möglich, Format
-    bool sendCharPropertyValue(uint8_t, uint8_t, const char[] ); // Property Nummer, Node Nummer, Value
-    bool sendIntPropertyValue(uint8_t, uint8_t, int16_t ); // Property Nummer, Node Nummer, Value
-    bool sendFloatPropertyValue(uint8_t, uint8_t, float ); // Property Nummer, Node Nummer, Value
+    bool addNode(const char[], const char[], uint16_t); // name, Nodenummer > 0
+    bool addProperty( uint8_t, uint16_t, const char[], const char[], const char[], bool, const char[] ); // Property Nummer, Node Nummer, Property Name, Unit Nummer, Datentyp Nummer, Setzen möglich, Format
+    bool sendCharPropertyValue(uint8_t, uint16_t, const char[] ); // Property Nummer, Node Nummer, Value
+    bool sendIntPropertyValue(uint8_t, uint16_t, int16_t ); // Property Nummer, Node Nummer, Value
+    bool sendFloatPropertyValue(uint8_t, uint16_t, float ); // Property Nummer, Node Nummer, Value
     void printInternMessage(void);
     void setDeviceFwName(const char[]);
     void setDeviceFwVersion(const char[]);

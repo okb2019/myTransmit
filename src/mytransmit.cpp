@@ -66,12 +66,12 @@ bool myHomeSachen::initRadio(uint8_t ssPin, uint8_t irqPin, uint16_t nodeID, boo
 }
 
 
-bool myHomeSachen::sendToNode(uint8_t destNode)
+bool myHomeSachen::sendToNode(uint16_t destNode)
 {
 
   Serial1.print("Sending to Gateway : ");
   Serial1.println(destNode);
-  Serial1.print("Sending ...");
+  Serial1.printf("Sending ... to: %d Node :%d Prop: %d Keyw: %s Nachricht: %s\n", destNode, internMessage.myNodes, internMessage.myProperties, myKeyWords[internMessage.myKeyWordNumber], internMessage.myNachricht);
   if (myRadio->sendWithRetry(destNode, (const void*)(&internMessage), sizeof(DTransfer),2 , 100))
   {
     Serial1.println("\nok.\n");
@@ -84,7 +84,7 @@ bool myHomeSachen::sendToNode(uint8_t destNode)
   }
 }
 
-bool myHomeSachen::sendNodeinfoToNode(uint8_t destNode, uint8_t myNodeID, uint8_t myType, char myNachricht[]) // gateway, Nodenummer, Name, Type, Nachricht
+bool myHomeSachen::sendNodeinfoToNode(uint16_t destNode, uint16_t myNodeID, uint8_t myType, char myNachricht[]) // gateway, Nodenummer, Name, Type, Nachricht
 {
   bool ergebnis;
   uint8_t laenge;
@@ -107,7 +107,7 @@ bool myHomeSachen::sendNodeinfoToNode(uint8_t destNode, uint8_t myNodeID, uint8_
   return ergebnis;
 }
 
-bool myHomeSachen::sendToNode(uint8_t destNode, uint8_t myDummyChanel, uint8_t myDummyItem, uint8_t myDummyKeyWordNumber, const char myDummyNachricht[])
+bool myHomeSachen::sendToNode(uint16_t destNode, uint16_t myDummyChanel, uint8_t myDummyItem, uint8_t myDummyKeyWordNumber, const char myDummyNachricht[])
 {
   internMessage.myNodes = myDummyChanel;
   internMessage.myProperties = myDummyItem;
@@ -274,7 +274,7 @@ bool myHomeSachen::sendPropertiesInfo(void)
   return sendenok;
 }
 
-bool myHomeSachen::addNode(const char myName[], const char myType[], uint8_t Nummer)
+bool myHomeSachen::addNode(const char myName[], const char myType[], uint16_t Nummer)
 {
   myHomeNode dummyNode;
   dummyNode.nodeProperties[0] = '\0';
@@ -320,7 +320,7 @@ bool myHomeSachen::addNode(const char myName[], const char myType[], uint8_t Num
     return false;
 }
 
-bool myHomeSachen::addProperty( uint8_t pNummer, uint8_t nNummer, const char pName[], const char pUnit[], const char pDataType[], bool pSettable, const char pFormat[]) // Property Nummer, Node Nummer, Property Name, Unit Nummer, Datentyp Nummer, Setzen möglich
+bool myHomeSachen::addProperty( uint8_t pNummer, uint16_t nNummer, const char pName[], const char pUnit[], const char pDataType[], bool pSettable, const char pFormat[]) // Property Nummer, Node Nummer, Property Name, Unit Nummer, Datentyp Nummer, Setzen möglich
 {
   myHomeProperty hProperty;
   myHomeNode hNode;
@@ -393,7 +393,7 @@ bool myHomeSachen::addProperty( uint8_t pNummer, uint8_t nNummer, const char pNa
 
 }
 
-bool myHomeSachen::sendCharPropertyValue(uint8_t propertyNummer, uint8_t nodeNummer, const char propertyValue[])
+bool myHomeSachen::sendCharPropertyValue(uint8_t propertyNummer, uint16_t nodeNummer, const char propertyValue[])
 {
   internMessage.myNodes = nodeNummer;
   internMessage.myProperties = propertyNummer;
@@ -405,7 +405,7 @@ bool myHomeSachen::sendCharPropertyValue(uint8_t propertyNummer, uint8_t nodeNum
     return true;
 }
 
-bool myHomeSachen::sendIntPropertyValue(uint8_t propertyNummer, uint8_t nodeNummer, int16_t propertyValue)
+bool myHomeSachen::sendIntPropertyValue(uint8_t propertyNummer, uint16_t nodeNummer, int16_t propertyValue)
 {
   internMessage.myNodes = nodeNummer;
   internMessage.myProperties = propertyNummer;
@@ -417,7 +417,7 @@ bool myHomeSachen::sendIntPropertyValue(uint8_t propertyNummer, uint8_t nodeNumm
     return true;
 }
 
-bool myHomeSachen::sendFloatPropertyValue(uint8_t propertyNummer, uint8_t nodeNummer, float propertyValue)
+bool myHomeSachen::sendFloatPropertyValue(uint8_t propertyNummer, uint16_t nodeNummer, float propertyValue)
 {
   internMessage.myNodes = nodeNummer;
   internMessage.myProperties = propertyNummer;
