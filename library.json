@@ -20,7 +20,7 @@
   "license": "MIT",
   "homepage": "",
   "dependencies": {
-    "ownername/print": "~1.3.0"
+    "lowpowerlab/RFM69": "^1.6.0"
   },
   "frameworks": "Arduino",
   "platforms": "STM32, ESP32"
