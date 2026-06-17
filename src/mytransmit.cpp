@@ -36,7 +36,7 @@ myHomeSachen::myHomeSachen( const char myName[] )
   //strncpy(deviceMac,"",MAX_PAYLOAD_SIZE);
   //strncpy(deviceFwName,"dummy Device",MAX_PAYLOAD_SIZE);
   //strncpy(deviceFwVersion,"0.0.1",MAX_PAYLOAD_SIZE);
-  strncpy(deviceImplementation,"STM32F103c8t6 mini",MAX_PAYLOAD_SIZE);
+  strncpy(deviceImplementation,"STM32F491CC",MAX_PAYLOAD_SIZE);
   //strncpy(deviceStatsUptime,"0",MAX_PAYLOAD_SIZE);
   //strncpy(deviceStatsSignal,"0",MAX_PAYLOAD_SIZE);
   //strncpy(deviceStatsBattery,"0",MAX_PAYLOAD_SIZE);
@@ -47,7 +47,7 @@ myHomeSachen::myHomeSachen( const char myName[] )
 
 bool myHomeSachen::initRadio(uint8_t ssPin, uint8_t irqPin, uint16_t nodeID, bool myIsHW )
 {
-  Serial1.println("Entering initRadio");
+  mySerialPrintln("Entering initRadio");
 
   myRadio = new RFM69_ATC(ssPin, irqPin, myIsHW);
   //myRadio = new RFM69_ATC();
@@ -57,7 +57,7 @@ bool myHomeSachen::initRadio(uint8_t ssPin, uint8_t irqPin, uint16_t nodeID, boo
     myRadio->encrypt(ENCRYPTKEY);
     
     #ifdef IS_RFM69HW_HCW
-    Serial1.println("Setting HigPower");
+    mySerialPrintln("Setting HigPower");
     myRadio->setHighPower(); //must include this only for RFM69HW/HCW!
     #endif
 
@@ -69,17 +69,17 @@ bool myHomeSachen::initRadio(uint8_t ssPin, uint8_t irqPin, uint16_t nodeID, boo
 bool myHomeSachen::sendToNode(uint16_t destNode)
 {
 
-  Serial1.print("Sending to Gateway : ");
-  Serial1.println(destNode);
-  Serial1.printf("Sending ... to: %d Node :%d Prop: %d Keyw: %s Nachricht: %s\n", destNode, internMessage.myNodes, internMessage.myProperties, myKeyWords[internMessage.myKeyWordNumber], internMessage.myNachricht);
+  mySerialPrint("Sending to Gateway : ");
+  mySerialPrintln(destNode);
+  mySerialPrintf("Sending ... to: %d Node :%d Prop: %d Keyw: %s Nachricht: %s\n", destNode, internMessage.myNodes, internMessage.myProperties, myKeyWords[internMessage.myKeyWordNumber], internMessage.myNachricht);
   if (myRadio->sendWithRetry(destNode, (const void*)(&internMessage), sizeof(DTransfer),2 , 100))
   {
-    Serial1.println("\nok.\n");
+    mySerialPrintln("\nok.\n");
     return true;
   }
   else
   {
-    Serial1.println("\nfehlgeschlagen!!\n");
+    mySerialPrintln("\nfehlgeschlagen!!\n");
     return false;
   }
 }
@@ -95,7 +95,7 @@ bool myHomeSachen::sendNodeinfoToNode(uint16_t destNode, uint16_t myNodeID, uint
   if(snprintf(internMessage.myNachricht,MAX_PAYLOAD_SIZE,"%s",myNachricht) >= MAX_PAYLOAD_SIZE)
     internMessage.myNachricht[MAX_PAYLOAD_SIZE-1] = '\0';
 
-  Serial1.println(("In sendNodeinfoToNode"));
+  mySerialPrintln(("In sendNodeinfoToNode"));
   printInternMessage();
   
   if(sendToNode(destNode))
@@ -117,7 +117,7 @@ bool myHomeSachen::sendToNode(uint16_t destNode, uint16_t myDummyChanel, uint8_t
     internMessage.myNachricht[MAX_PAYLOAD_SIZE-1] = '\0';
  
 
-  Serial1.println(("In SendToNode"));
+  mySerialPrintln(("In SendToNode"));
   printInternMessage();
 
   if(sendToNode(destNode))
@@ -131,12 +131,12 @@ void myHomeSachen::loop(void)
   uint8_t  temperatur;
      if(myRadio->receiveDone() && myRadio->DATALEN == sizeof(DTransfer))
     {
-        Serial1.println("Message received");
+        mySerialPrintln("Message received");
         memcpy(&internMessage, myRadio->DATA, sizeof(internMessage)); 
         if (myRadio->ACKRequested())
         {
             myRadio->sendACK();
-            Serial1.println(" - ACK sent");
+            mySerialPrintln(" - ACK sent");
             delay(10);
         }  
         deviceStatsRFM69Temperatur = myRadio->readTemperature();
@@ -151,7 +151,7 @@ bool myHomeSachen::sendDeviceInfo(void)
   String myBoolean;
   bool sendenok = true;
 
-  Serial1.println("\nSending Device infos...\n");
+  mySerialPrintln("\nSending Device infos...\n");
   if(!sendToNode(GATEWAYID, 0, 0, myHOMIE, HOMIEVERSION))                   // $homie
     sendenok  = false;
   if(!sendToNode(GATEWAYID, 0, 0, myNAME, deviceName))                      // $name
@@ -198,10 +198,10 @@ bool myHomeSachen::sendNodeInfo(void)
 
   if(!myHomieNodes.isEmpty())
   {
-    Serial1.println("\nSending Node infos...");
-    Serial1.print("Number of Nodes : ");
-    Serial1.println(myHomieNodes.getSize());
-    Serial1.println();
+    mySerialPrintln("\nSending Node infos...");
+    mySerialPrint("Number of Nodes : ");
+    mySerialPrintln(myHomieNodes.getSize());
+    mySerialPrintln();
 
     for( int lauf = 0; lauf < myHomieNodes.getSize(); lauf++)
     {
@@ -230,7 +230,7 @@ bool myHomeSachen::sendPropertiesInfo(void)
 
   if(!myHomieProperies.isEmpty())
   {
-    Serial1.println("\nSending Properties infos...\n");
+    mySerialPrintln("\nSending Properties infos...\n");
     for( int lauf = 0; lauf < myHomieProperies.getSize(); lauf++)
     {
       pProperty = myHomieProperies[lauf];
@@ -280,10 +280,10 @@ bool myHomeSachen::addNode(const char myName[], const char myType[], uint16_t Nu
   dummyNode.nodeProperties[0] = '\0';
   char buffer[MAX_PAYLOAD_SIZE];
 
-  Serial1.print("Adding Node : ");
-  Serial1.print( myName );
-  Serial1.print(" with Number : ");
-  Serial1.println(Nummer);
+  mySerialPrint("Adding Node : ");
+  mySerialPrint( myName );
+  mySerialPrint(" with Number : ");
+  mySerialPrintln(Nummer);
 
   if(Nummer > 0) // Nodenummern müsser größer als 0 sein
   {
@@ -301,7 +301,7 @@ bool myHomeSachen::addNode(const char myName[], const char myType[], uint16_t Nu
     
     }
 
-    Serial1.println(String("myNodes : ") + deviceNodesIDs);
+    mySerialPrintln(String("myNodes : ") + deviceNodesIDs);
 
     dummyNode.nodeID = Nummer;
 
@@ -325,12 +325,12 @@ bool myHomeSachen::addProperty( uint8_t pNummer, uint16_t nNummer, const char pN
   myHomeProperty hProperty;
   myHomeNode hNode;
 
-  Serial1.printf("Adding Property : %d\n",pNummer);
-  Serial1.printf("Nodenummer      : %d\n",nNummer);
-  Serial1.printf("Propertyname    : %s\n", pName);
-  Serial1.printf("Propertyunit    : %s\n", pUnit);
-  Serial1.printf("Propertydatatype: %s\n", pDataType);
-  Serial1.printf("Propertysettable: %d\n",pSettable); 
+  mySerialPrintf("Adding Property : %d\n",pNummer);
+  mySerialPrintf("Nodenummer      : %d\n",nNummer);
+  mySerialPrintf("Propertyname    : %s\n", pName);
+  mySerialPrintf("Propertyunit    : %s\n", pUnit);
+  mySerialPrintf("Propertydatatype: %s\n", pDataType);
+  mySerialPrintf("Propertysettable: %d\n",pSettable); 
   
 
 
@@ -359,7 +359,7 @@ bool myHomeSachen::addProperty( uint8_t pNummer, uint16_t nNummer, const char pN
         else
           lauf = myHomieNodes.getSize(); // zu viele Properties
         
-        Serial1.printf("nodeProperties : %s", hNode.nodeProperties);
+        mySerialPrintf("nodeProperties : %s", hNode.nodeProperties);
         fertig = true;
         myHomieNodes.add(hNode);  // geänderten Node hinzufügen
         myHomieNodes.remove(lauf); // alten Node löschen
@@ -431,16 +431,16 @@ bool myHomeSachen::sendFloatPropertyValue(uint8_t propertyNummer, uint16_t nodeN
 
 void myHomeSachen::printInternMessage(void)
 {
-  Serial1.print("Gateway : ");
-  Serial1.print(GATEWAYID);
-  Serial1.print(" Nodenummer : ");
-  Serial1.print(internMessage.myNodes);
-  Serial1.print(" Propertynummer : ");
-  Serial1.print(internMessage.myProperties);
-  Serial1.print(" Topic : ");
-  Serial1.print(myKeyWords[internMessage.myKeyWordNumber]);
-  Serial1.print(" Nachricht : ");
-  Serial1.println(internMessage.myNachricht);
+  mySerialPrint("Gateway : ");
+  mySerialPrint(GATEWAYID);
+  mySerialPrint(" Nodenummer : ");
+  mySerialPrint(internMessage.myNodes);
+  mySerialPrint(" Propertynummer : ");
+  mySerialPrint(internMessage.myProperties);
+  mySerialPrint(" Topic : ");
+  mySerialPrint(myKeyWords[internMessage.myKeyWordNumber]);
+  mySerialPrint(" Nachricht : ");
+  mySerialPrintln(internMessage.myNachricht);
 }
 
 void myHomeSachen::setDeviceFwName(const char FwName[])

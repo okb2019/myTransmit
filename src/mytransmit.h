@@ -31,6 +31,26 @@
 #define HOMIEVERSION "4.0.0"
 #define MAX_PAYLOAD_SIZE 56 
 
+#ifndef SERIALPORT
+  #define SERIALPORT 1
+#endif
+
+#if (SERIALPORT == 0)
+  #define mySerialPrint(...) Serial.print(__VA_ARGS__)
+  #define mySerialPrintln(...) Serial.println(__VA_ARGS__)
+  #define mySerialPrintf(...) Serial.printf(__VA_ARGS__)
+#else if (SERIALPORT == 1)
+  #define mySerialPrint(...) Serial1.print(__VA_ARGS__)
+  #define mySerialPrintln(...) Serial1.println(__VA_ARGS__)
+  #define mySerialPrintf(...) Serial1.printf(__VA_ARGS__)
+#endif
+#else if (SERIALPORT == 2)
+  #define mySerialPrint(...) Serial2.print(__VA_ARGS__)
+  #define mySerialPrintln(...) Serial2.println(__VA_ARGS__)
+  #define mySerialPrintf(...) Serial2.printf(__VA_ARGS__)
+#endif
+
+
 typedef struct 
 {
   uint16_t   myNodes;         // es gibt bis zu 1023 Nodes

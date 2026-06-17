@@ -1,6 +1,6 @@
 {
   "name": "mytransmit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "RFM69 und rudimentaere Homie 4.0.0 einbindung",
   "keywords": "RFM69, Homie",
   "repository":
