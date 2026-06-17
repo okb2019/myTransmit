@@ -31,19 +31,19 @@
 #define HOMIEVERSION "4.0.0"
 #define MAX_PAYLOAD_SIZE 56 
 
-#ifndef SERIALPORT
-  #define SERIALPORT 1
+#ifndef mySERIALPORT
+  #define mySERIALPORT 1
 #endif
 
-#if (SERIALPORT == 0)
+#if (mySERIALPORT == 0)
   #define mySerialPrint(...) Serial.print(__VA_ARGS__)
   #define mySerialPrintln(...) Serial.println(__VA_ARGS__)
   #define mySerialPrintf(...) Serial.printf(__VA_ARGS__)
-#elif (SERIALPORT == 1)
+#elif (mySERIALPORT == 1)
   #define mySerialPrint(...) Serial1.print(__VA_ARGS__)
   #define mySerialPrintln(...) Serial1.println(__VA_ARGS__)
   #define mySerialPrintf(...) Serial1.printf(__VA_ARGS__)
-#elif (SERIALPORT == 2)
+#elif (mySERIALPORT == 2)
   #define mySerialPrint(...) Serial2.print(__VA_ARGS__)
   #define mySerialPrintln(...) Serial2.println(__VA_ARGS__)
   #define mySerialPrintf(...) Serial2.printf(__VA_ARGS__)
