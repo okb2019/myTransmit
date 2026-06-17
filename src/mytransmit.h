@@ -31,7 +31,7 @@
 #define HOMIEVERSION "4.0.0"
 #define MAX_PAYLOAD_SIZE 56 
 
-#ifndef (ESP32)
+#if defined(ESP32)
   #define mySERIALPORT 0
 #elif defined(ESP8266)
   #define mySERIALPORT 0
